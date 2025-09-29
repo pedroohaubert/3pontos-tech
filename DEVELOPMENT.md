@@ -111,16 +111,144 @@ app/
 - Migration criada e executada
 - Views de auth criadas automaticamente
 
+### Fase 1.3 & 1.4: Modelagem de Dados Core ✅ COMPLETO
+
+Implementação completa do modelo de dados relacional para o Reddit clone, seguindo as melhores práticas do Laravel e necessidades específicas da aplicação.
+
+#### Estrutura de Dados Implementada
+
+**Users (já existente + extensões)**
+
+- Campos: id, name, email, password, role, timestamps
+- Relacionamentos: posts, comments, votes, createdSubreddits
+- Roles: admin/user com controle de acesso ao Filament
+
+**Subreddits**
+
+- Campos: id, name (unique slug), display_name, description, user_id, timestamps
+- Relacionamentos: user (creator), posts (hasMany)
+- Características: nomes únicos em formato slug (ex: 'technology'), criados por usuários
+- Índices: user_id para performance
+
+**Posts**
+
+- Campos: id, title, content (markdown), user_id, subreddit_id, score, timestamps, soft deletes
+- Relacionamentos: user (author), subreddit, comments, votes (morphMany)
+- Características: conteúdo opcional (permite posts apenas com título/imagem), score calculado
+- Índices: subreddit_id + score + created_at (para ordenação), user_id + created_at
+- Soft deletes para moderação
+
+**Comments**
+
+- Campos: id, content (markdown), user_id, post_id, parent_id, score, depth, timestamps, soft deletes
+- Relacionamentos: user, post, parent (self-reference), children, votes (morphMany)
+- Características: sistema de comentários aninhados até profundidade máxima, depth tracking
+- Índices: post_id + score + created_at, user_id + created_at, parent_id, depth
+- Auto-cálculo de depth via model events
+
+**Votes**
+
+- Campos: id, user_id, voteable_type, voteable_id, type (up/down), timestamps
+- Relacionamentos: user, voteable (polymorphic para Post/Comment)
+- Características: uma votação por usuário por item, sistema polimórfico
+- Constraints: unique (user_id, voteable_type, voteable_id) previne double-voting
+- Índices: morphs (voteable_type, voteable_id), user_id + created_at
+- Auto-atualização de scores via model events
+
+#### Relacionamentos Eloquent
+
+```php
+// User relationships
+User::posts()        // HasMany Post
+User::comments()     // HasMany Comment
+User::votes()        // HasMany Vote
+User::createdSubreddits() // HasMany Subreddit
+
+// Subreddit relationships
+Subreddit::user()    // BelongsTo User
+Subreddit::posts()   // HasMany Post
+
+// Post relationships
+Post::user()         // BelongsTo User
+Post::subreddit()    // BelongsTo Subreddit
+Post::comments()     // HasMany Comment
+Post::votes()        // MorphMany Vote
+
+// Comment relationships
+Comment::user()      // BelongsTo User
+Comment::post()      // BelongsTo Post
+Comment::parent()    // BelongsTo Comment (self)
+Comment::children()  // HasMany Comment (self)
+Comment::votes()     // MorphMany Vote
+
+// Vote relationships
+Vote::user()         // BelongsTo User
+Vote::voteable()     // MorphTo (Post|Comment)
+```
+
+#### Scopes e Métodos de Ordenação
+
+**Subreddit Scopes:**
+
+- `active()` - Apenas subreddits com posts
+- `popular()` - Ordenado por contagem de posts
+
+**Post Scopes:**
+
+- `bySubreddit($id)` - Posts de um subreddit específico
+- `new()` - Ordenação por data de criação (mais recentes primeiro)
+- `top()` - Ordenação por score
+- `hot()` - Algoritmo Reddit-like com decay temporal
+
+**Comment Scopes:**
+
+- `root()` - Apenas comentários raiz (sem parent)
+- `byPost($id)` - Comentários de um post específico
+- `byUser($id)` - Comentários de um usuário
+- `byDepth($depth)` - Comentários em nível específico
+
+**Vote Scopes:**
+
+- `upvotes()` / `downvotes()` - Filtrar por tipo
+- `byUser($id)` - Votos de um usuário
+- `forType($type)` - Votos para Posts ou Comments
+
+#### Factories para Testes
+
+Implementadas factories completas com dados realistas:
+
+- **SubredditFactory**: nomes dinâmicos, descrições opcionais, usuários criadores
+- **PostFactory**: títulos variados, conteúdo opcional, scores realistas
+- **CommentFactory**: conteúdo variado, suporte a replies aninhadas
+- **VoteFactory**: distribuição balanceada up/down, suporte polimórfico
+
+#### Decisões Técnicas
+
+1. **Polymorphic Votes**: Escolhido sobre tabelas separadas para reduzir complexidade e manter DRY
+2. **Score Denormalization**: Scores calculados em tempo real para performance de queries
+3. **Soft Deletes**: Implementado em Posts e Comments para permitir moderação não-destrutiva
+4. **Depth Tracking**: Campo depth para otimizar renderização de comentários aninhados
+5. **Unique Constraints**: Em votos para prevenir double-voting a nível de banco
+6. **Cascade Deletes**: Configurados para manter integridade referencial
+7. **Indexes Estratégicos**: Otimizados para queries mais comuns (listagem por subreddit, ordenação por score/date)
+
+#### Performance Considerations
+
+- **Composite Indexes**: Para queries complexas (subreddit + score + date)
+- **Morphs Indexes**: Para queries polimórficas eficientes
+- **Score Auto-update**: Via model events para manter consistência
+- **Depth Limiting**: Restrição de profundidade de comentários (máximo 10 níveis)
+- **Pagination Ready**: Estrutura preparada para cursor-based pagination
+
 ### Próximas Etapas
 
-1. **Modelagem de Dados Core**: Criar migrations para Subreddits, Posts, Comments, Votes
-2. **Business Logic**: Implementar Services e DTOs
-3. **Thin Controllers**: Controllers delegando para services
-4. **Authorization**: Policies para controle de acesso
-5. **Admin Panel**: Filament resources para gestão
-6. **Frontend**: Páginas públicas com Blade + Tailwind
-7. **Features**: Sistema de votos, comentários aninhados
-8. **Testing**: Cobertura completa com testes
+1. **Business Logic**: Implementar Services e DTOs
+2. **Thin Controllers**: Controllers delegando para services
+3. **Authorization**: Policies para controle de acesso
+4. **Admin Panel**: Filament resources para gestão
+5. **Frontend**: Páginas públicas com Blade + Tailwind
+6. **Features**: Sistema de votos, comentários aninhados
+7. **Testing**: Cobertura completa com testes
 
 ## Trade-offs Conscientes
 

@@ -45,20 +45,20 @@ php artisan make:migration update_admin_user_role --table=users ✅
 php artisan migrate ✅
 ```
 
-### 1.3 Modelagem de Dados Core
+### 1.3 Modelagem de Dados Core ✅ COMPLETO
 
-- Criar migrations para: Subreddits, Posts, Comments, Votes
-- Definir relacionamentos Eloquent
-- Implementar soft deletes onde apropriado
-- Criar factories para seeding
+- ✅ Criar migrations para: Subreddits, Posts, Comments, Votes
+- ✅ Definir relacionamentos Eloquent
+- ✅ Implementar soft deletes onde apropriado
+- ✅ Criar factories para seeding
 
-### 1.4 Models e Relacionamentos
+### 1.4 Models e Relacionamentos ✅ COMPLETO
 
-- User model (já existe, ajustar relacionamentos)
-- Subreddit model
-- Post model (com suporte a Markdown)
-- Comment model (aninhado)
-- Vote model (upvote/downvote)
+- ✅ User model (já existe, ajustar relacionamentos)
+- ✅ Subreddit model
+- ✅ Post model (com suporte a Markdown)
+- ✅ Comment model (aninhado)
+- ✅ Vote model (upvote/downvote)
 
 ## Fase 2: Business Logic (Services & DTOs)
 

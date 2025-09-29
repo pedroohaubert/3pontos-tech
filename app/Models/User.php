@@ -9,6 +9,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -70,6 +71,42 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    /**
+     * Get all posts created by this user.
+     * @return HasMany<Post, $this>
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get all comments created by this user.
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get all votes cast by this user.
+     * @return HasMany<Vote, $this>
+     */
+    public function votes(): HasMany
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    /**
+     * Get all subreddits created by this user.
+     * @return HasMany<Subreddit, $this>
+     */
+    public function createdSubreddits(): HasMany
+    {
+        return $this->hasMany(Subreddit::class);
     }
 
     /**
