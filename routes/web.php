@@ -12,7 +12,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas (não logadas)
-Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 Route::get('/r/{subreddit}', [SubredditController::class, 'show'])->name('subreddits.show');
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 

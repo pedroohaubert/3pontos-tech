@@ -14,6 +14,9 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create admin user for testing
+        $this->call(AdminUserSeeder::class);
+
         if (app()->isLocal()) {
             User::factory()->admin()->create();
         }
