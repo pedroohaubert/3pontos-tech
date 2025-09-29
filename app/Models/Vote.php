@@ -15,11 +15,6 @@ final class Vote extends Model
     /** @use HasFactory<VoteFactory> */
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'user_id',
         'voteable_type',
@@ -27,12 +22,8 @@ final class Vote extends Model
         'type',
     ];
 
-    /**
-     * Toggle between upvote and downvote, or remove vote if same type.
-     */
     public static function toggle(User $user, $voteable, string $type): ?self
     {
-        // Check if user already voted on this item
         $existingVote = self::query()->where('user_id', $user->id)
             ->where('voteable_type', $voteable::class)
             ->where('voteable_id', $voteable->id)
@@ -40,20 +31,17 @@ final class Vote extends Model
 
         if ($existingVote) {
             if ($existingVote->type === $type) {
-                // Same vote type - remove the vote
                 $existingVote->delete();
 
                 return null;
             }
 
-            // Different vote type - update to new type
             $existingVote->update(['type' => $type]);
 
             return $existingVote;
 
         }
 
-        // No existing vote - create new vote
         return self::query()->create([
             'user_id' => $user->id,
             'voteable_type' => $voteable::class,
@@ -62,9 +50,6 @@ final class Vote extends Model
         ]);
     }
 
-    /**
-     * Remove a user's vote from a specific item.
-     */
     public static function removeVote(User $user, $voteable): bool
     {
         return self::query()->where('user_id', $user->id)
@@ -73,9 +58,6 @@ final class Vote extends Model
             ->delete() > 0;
     }
 
-    /**
-     * Check if a user has voted on a specific item.
-     */
     public static function hasVoted(User $user, $voteable, ?string $type = null): bool
     {
         $query = self::query()->where('user_id', $user->id)
@@ -89,9 +71,6 @@ final class Vote extends Model
         return $query->exists();
     }
 
-    /**
-     * Get the vote type for a specific user and item.
-     */
     public static function getUserVote(User $user, $voteable): ?string
     {
         $vote = self::query()->where('user_id', $user->id)
@@ -103,7 +82,6 @@ final class Vote extends Model
     }
 
     /**
-     * Get the user who cast this vote.
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -111,49 +89,11 @@ final class Vote extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the parent voteable model (Post or Comment).
-     */
     public function voteable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Scope to get only upvotes.
-     */
-    protected function scopeUpvotes($query)
-    {
-        return $query->where('type', 'up');
-    }
-
-    /**
-     * Scope to get only downvotes.
-     */
-    protected function scopeDownvotes($query)
-    {
-        return $query->where('type', 'down');
-    }
-
-    /**
-     * Scope to get votes by a specific user.
-     */
-    protected function scopeByUser($query, $userId)
-    {
-        return $query->where('user_id', $userId);
-    }
-
-    /**
-     * Scope to get votes for a specific model type.
-     */
-    protected function scopeForType($query, string $type)
-    {
-        return $query->where('voteable_type', $type);
-    }
-
-    /**
-     * Update the voteable model's score after vote changes.
-     */
     protected static function booted(): void
     {
         self::created(function (Vote $vote): void {
@@ -169,11 +109,26 @@ final class Vote extends Model
         });
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected function scopeUpvotes($query)
+    {
+        return $query->where('type', 'up');
+    }
+
+    protected function scopeDownvotes($query)
+    {
+        return $query->where('type', 'down');
+    }
+
+    protected function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    protected function scopeForType($query, string $type)
+    {
+        return $query->where('voteable_type', $type);
+    }
+
     protected function casts(): array
     {
         return [

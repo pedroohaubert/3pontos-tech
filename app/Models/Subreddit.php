@@ -15,11 +15,6 @@ final class Subreddit extends Model
     /** @use HasFactory<SubredditFactory> */
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'display_name',
@@ -28,7 +23,6 @@ final class Subreddit extends Model
     ];
 
     /**
-     * Get the user that created this subreddit.
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -37,7 +31,6 @@ final class Subreddit extends Model
     }
 
     /**
-     * Get all posts in this subreddit.
      * @return HasMany<Post, $this>
      */
     public function posts(): HasMany
@@ -45,44 +38,29 @@ final class Subreddit extends Model
         return $this->hasMany(Post::class);
     }
 
-    /**
-     * Scope to get active subreddits (those with posts).
-     */
     protected function scopeActive($query)
     {
         return $query->whereHas('posts');
     }
 
-    /**
-     * Scope to get popular subreddits (by post count).
-     */
     protected function scopePopular($query)
     {
         return $query->withCount('posts')
             ->orderBy('posts_count', 'desc');
     }
 
-    /**
-     * Get the total number of posts in this subreddit.
-     */
     protected function getPostCountAttribute(): int
     {
         return $this->posts()->count();
     }
 
-    /**
-     * Get the URL path for this subreddit.
-     */
     protected function getPathAttribute(): string
     {
-        return '/r/' . $this->name;
+        return '/r/'.$this->name;
     }
 
-    /**
-     * Get the display name with r/ prefix.
-     */
     protected function getPrefixedNameAttribute(): string
     {
-        return 'r/' . $this->name;
+        return 'r/'.$this->name;
     }
 }

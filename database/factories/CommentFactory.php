@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -15,33 +14,20 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 final class CommentFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var class-string<Model>
-     */
     protected $model = Comment::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
             'content' => fake()->paragraphs(random_int(1, 3), true),
             'user_id' => User::factory(),
             'post_id' => Post::factory(),
-            'parent_id' => null, // Root comment by default
+            'parent_id' => null,
             'score' => fake()->numberBetween(-10, 100),
-            'depth' => 0, // Will be auto-calculated by model event
+            'depth' => 0,
         ];
     }
 
-    /**
-     * Create a reply to a specific comment.
-     */
     public function replyTo(Comment $parent): self
     {
         return $this->state(fn (array $attributes) => [
@@ -51,9 +37,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a root comment (no parent).
-     */
     public function root(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -62,9 +45,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a nested reply at a specific depth.
-     */
     public function atDepth(int $depth): self
     {
         return $this->state(fn (array $attributes) => [
@@ -72,9 +52,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a comment on a specific post.
-     */
     public function onPost(Post $post): self
     {
         return $this->state(fn (array $attributes) => [
@@ -82,9 +59,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a comment by a specific user.
-     */
     public function byUser(User $user): self
     {
         return $this->state(fn (array $attributes) => [
@@ -92,9 +66,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a highly upvoted comment.
-     */
     public function popular(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -102,9 +73,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a short comment.
-     */
     public function short(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -112,9 +80,6 @@ final class CommentFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a long comment.
-     */
     public function long(): self
     {
         return $this->state(fn (array $attributes) => [

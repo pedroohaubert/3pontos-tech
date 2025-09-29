@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -15,18 +14,8 @@ use Illuminate\Support\Str;
  */
 final class SubredditFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var class-string<Model>
-     */
     protected $model = Subreddit::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $displayName = fake()->words(random_int(1, 3), true);
@@ -40,9 +29,6 @@ final class SubredditFactory extends Factory
         ];
     }
 
-    /**
-     * Create a subreddit with a specific name.
-     */
     public function withName(string $name): self
     {
         return $this->state(fn (array $attributes) => [
@@ -51,9 +37,6 @@ final class SubredditFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a popular subreddit.
-     */
     public function popular(): self
     {
         return $this->state(fn (array $attributes) => [

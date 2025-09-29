@@ -8,30 +8,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table): void {
             $table->id();
-            $table->string('title', 300); // Required title with max length
-            $table->text('content')->nullable(); // Markdown content, nullable for image-only posts
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Author
-            $table->foreignId('subreddit_id')->constrained()->onDelete('cascade'); // Belongs to subreddit
-            $table->integer('score')->default(0); // Calculated vote score for sorting
+            $table->string('title', 300);
+            $table->text('content')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('subreddit_id')->constrained()->onDelete('cascade');
+            $table->integer('score')->default(0);
             $table->timestamps();
-            $table->softDeletes(); // For moderation capabilities
+            $table->softDeletes();
 
-            // Indexes for performance
-            $table->index(['subreddit_id', 'score', 'created_at']); // For sorting posts by subreddit
-            $table->index(['user_id', 'created_at']); // For user posts
+            $table->index(['subreddit_id', 'score', 'created_at']);
+            $table->index(['user_id', 'created_at']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('posts');

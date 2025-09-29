@@ -23,11 +23,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     use InteractsWithMedia;
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -35,11 +30,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
         'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -57,24 +47,17 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
         return $avatar?->getUrl();
     }
 
-    /**
-     * Check if user is admin
-     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    /**
-     * Check if user is regular user
-     */
     public function isUser(): bool
     {
         return $this->role === 'user';
     }
 
     /**
-     * Get all posts created by this user.
      * @return HasMany<Post, $this>
      */
     public function posts(): HasMany
@@ -83,7 +66,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     }
 
     /**
-     * Get all comments created by this user.
      * @return HasMany<Comment, $this>
      */
     public function comments(): HasMany
@@ -92,7 +74,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     }
 
     /**
-     * Get all votes cast by this user.
      * @return HasMany<Vote, $this>
      */
     public function votes(): HasMany
@@ -101,7 +82,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     }
 
     /**
-     * Get all subreddits created by this user.
      * @return HasMany<Subreddit, $this>
      */
     public function createdSubreddits(): HasMany
@@ -109,11 +89,6 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
         return $this->hasMany(Subreddit::class);
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [

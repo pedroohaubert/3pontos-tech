@@ -19,11 +19,6 @@ final class Post extends Model
 
     use SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'title',
         'content',
@@ -33,7 +28,6 @@ final class Post extends Model
     ];
 
     /**
-     * Get the user that created this post.
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -42,7 +36,6 @@ final class Post extends Model
     }
 
     /**
-     * Get the subreddit this post belongs to.
      * @return BelongsTo<Subreddit, $this>
      */
     public function subreddit(): BelongsTo
@@ -51,7 +44,6 @@ final class Post extends Model
     }
 
     /**
-     * Get all comments on this post.
      * @return HasMany<Comment, $this>
      */
     public function comments(): HasMany
@@ -60,7 +52,6 @@ final class Post extends Model
     }
 
     /**
-     * Get all votes on this post.
      * @return MorphMany<Vote, $this>
      */
     public function votes(): MorphMany
@@ -68,82 +59,6 @@ final class Post extends Model
         return $this->morphMany(Vote::class, 'voteable');
     }
 
-    /**
-     * Scope to get posts by subreddit.
-     */
-    protected function scopeBySubreddit($query, $subredditId)
-    {
-        return $query->where('subreddit_id', $subredditId);
-    }
-
-    /**
-     * Scope to order posts by newest first.
-     */
-    protected function scopeNew($query)
-    {
-        return $query->orderBy('created_at', 'desc');
-    }
-
-    /**
-     * Scope to order posts by score (top posts).
-     */
-    protected function scopeTop($query)
-    {
-        return $query->orderBy('score', 'desc');
-    }
-
-    /**
-     * Scope to order posts by "hot" algorithm (Reddit-style).
-     * Simplified version: score with time decay.
-     */
-    protected function scopeHot($query)
-    {
-        return $query->orderByRaw('(score - 1) / POW(TIMESTAMPDIFF(HOUR, created_at, NOW()) + 2, 1.8) DESC');
-    }
-
-    /**
-     * Get the total number of comments on this post.
-     */
-    protected function getCommentCountAttribute(): int
-    {
-        return $this->comments()->count();
-    }
-
-    /**
-     * Get the time since creation in human readable format.
-     */
-    protected function getTimeAgoAttribute(): string
-    {
-        return $this->created_at->diffForHumans();
-    }
-
-    /**
-     * Get the URL path for this post.
-     */
-    protected function getPathAttribute(): string
-    {
-        return sprintf('/r/%s/%d', $this->subreddit->name, $this->id);
-    }
-
-    /**
-     * Get the upvote count for this post.
-     */
-    protected function getUpvoteCountAttribute(): int
-    {
-        return $this->votes()->where('type', 'up')->count();
-    }
-
-    /**
-     * Get the downvote count for this post.
-     */
-    protected function getDownvoteCountAttribute(): int
-    {
-        return $this->votes()->where('type', 'down')->count();
-    }
-
-    /**
-     * Update the score based on current votes.
-     */
     public function updateScore(): void
     {
         $upvotes = $this->votes()->where('type', 'up')->count();
@@ -151,11 +66,51 @@ final class Post extends Model
         $this->update(['score' => $upvotes - $downvotes]);
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected function scopeBySubreddit($query, $subredditId)
+    {
+        return $query->where('subreddit_id', $subredditId);
+    }
+
+    protected function scopeNew($query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    protected function scopeTop($query)
+    {
+        return $query->orderBy('score', 'desc');
+    }
+
+    protected function scopeHot($query)
+    {
+        return $query->orderByRaw('(score - 1) / POW(TIMESTAMPDIFF(HOUR, created_at, NOW()) + 2, 1.8) DESC');
+    }
+
+    protected function getCommentCountAttribute(): int
+    {
+        return $this->comments()->count();
+    }
+
+    protected function getTimeAgoAttribute(): string
+    {
+        return $this->created_at->diffForHumans();
+    }
+
+    protected function getPathAttribute(): string
+    {
+        return sprintf('/r/%s/%d', $this->subreddit->name, $this->id);
+    }
+
+    protected function getUpvoteCountAttribute(): int
+    {
+        return $this->votes()->where('type', 'up')->count();
+    }
+
+    protected function getDownvoteCountAttribute(): int
+    {
+        return $this->votes()->where('type', 'down')->count();
+    }
+
     protected function casts(): array
     {
         return [

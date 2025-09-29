@@ -8,27 +8,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('subreddits', function (Blueprint $table): void {
             $table->id();
-            $table->string('name')->unique(); // Unique slug like 'technology'
-            $table->string('display_name'); // Human readable like 'Technology'
-            $table->text('description')->nullable(); // Optional description
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Creator
+            $table->string('name')->unique();
+            $table->string('display_name');
+            $table->text('description')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            // Index for performance
             $table->index('user_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('subreddits');

@@ -19,11 +19,6 @@ final class Comment extends Model
 
     use SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'content',
         'user_id',
@@ -34,7 +29,6 @@ final class Comment extends Model
     ];
 
     /**
-     * Get the user that created this comment.
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -43,7 +37,6 @@ final class Comment extends Model
     }
 
     /**
-     * Get the post this comment belongs to.
      * @return BelongsTo<Post, $this>
      */
     public function post(): BelongsTo
@@ -52,7 +45,6 @@ final class Comment extends Model
     }
 
     /**
-     * Get the parent comment (for nested replies).
      * @return BelongsTo<\App\Models\Comment, $this>
      */
     public function parent(): BelongsTo
@@ -61,7 +53,6 @@ final class Comment extends Model
     }
 
     /**
-     * Get all child comments (replies to this comment).
      * @return HasMany<\App\Models\Comment, $this>
      */
     public function children(): HasMany
@@ -70,7 +61,6 @@ final class Comment extends Model
     }
 
     /**
-     * Get all votes on this comment.
      * @return MorphMany<Vote, $this>
      */
     public function votes(): MorphMany
@@ -78,49 +68,11 @@ final class Comment extends Model
         return $this->morphMany(Vote::class, 'voteable');
     }
 
-    /**
-     * Scope to get only root comments (no parent).
-     */
-    protected function scopeRoot($query)
-    {
-        return $query->whereNull('parent_id');
-    }
-
-    /**
-     * Scope to get comments by post.
-     */
-    protected function scopeByPost($query, $postId)
-    {
-        return $query->where('post_id', $postId);
-    }
-
-    /**
-     * Scope to get comments by user.
-     */
-    protected function scopeByUser($query, $userId)
-    {
-        return $query->where('user_id', $userId);
-    }
-
-    /**
-     * Scope to get comments by depth level.
-     */
-    protected function scopeByDepth($query, $depth)
-    {
-        return $query->where('depth', $depth);
-    }
-
-    /**
-     * Check if this is a reply to another comment.
-     */
     public function isReply(): bool
     {
         return $this->parent_id !== null;
     }
 
-    /**
-     * Get the entire thread path from root to this comment.
-     */
     public function getThread(): array
     {
         $thread = [];
@@ -134,41 +86,6 @@ final class Comment extends Model
         return $thread;
     }
 
-    /**
-     * Get the time since creation in human readable format.
-     */
-    protected function getTimeAgoAttribute(): string
-    {
-        return $this->created_at->diffForHumans();
-    }
-
-    /**
-     * Get the total number of replies to this comment.
-     */
-    protected function getReplyCountAttribute(): int
-    {
-        return $this->children()->count();
-    }
-
-    /**
-     * Get the upvote count for this comment.
-     */
-    protected function getUpvoteCountAttribute(): int
-    {
-        return $this->votes()->where('type', 'up')->count();
-    }
-
-    /**
-     * Get the downvote count for this comment.
-     */
-    protected function getDownvoteCountAttribute(): int
-    {
-        return $this->votes()->where('type', 'down')->count();
-    }
-
-    /**
-     * Update the score based on current votes.
-     */
     public function updateScore(): void
     {
         $upvotes = $this->votes()->where('type', 'up')->count();
@@ -176,9 +93,6 @@ final class Comment extends Model
         $this->update(['score' => $upvotes - $downvotes]);
     }
 
-    /**
-     * Update depth when creating a reply.
-     */
     protected static function booted(): void
     {
         self::creating(function (Comment $comment): void {
@@ -191,11 +105,46 @@ final class Comment extends Model
         });
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected function scopeRoot($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    protected function scopeByPost($query, $postId)
+    {
+        return $query->where('post_id', $postId);
+    }
+
+    protected function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    protected function scopeByDepth($query, $depth)
+    {
+        return $query->where('depth', $depth);
+    }
+
+    protected function getTimeAgoAttribute(): string
+    {
+        return $this->created_at->diffForHumans();
+    }
+
+    protected function getReplyCountAttribute(): int
+    {
+        return $this->children()->count();
+    }
+
+    protected function getUpvoteCountAttribute(): int
+    {
+        return $this->votes()->where('type', 'up')->count();
+    }
+
+    protected function getDownvoteCountAttribute(): int
+    {
+        return $this->votes()->where('type', 'down')->count();
+    }
+
     protected function casts(): array
     {
         return [

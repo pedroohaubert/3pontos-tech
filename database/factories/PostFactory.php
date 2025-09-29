@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Post;
 use App\Models\Subreddit;
 use App\Models\User;
@@ -15,18 +14,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 final class PostFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var class-string<Model>
-     */
     protected $model = Post::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -38,9 +27,6 @@ final class PostFactory extends Factory
         ];
     }
 
-    /**
-     * Create a post with specific content.
-     */
     public function withContent(string $content): self
     {
         return $this->state(fn (array $attributes) => [
@@ -48,9 +34,6 @@ final class PostFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a text-only post.
-     */
     public function textOnly(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -58,9 +41,6 @@ final class PostFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a post with high score.
-     */
     public function popular(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -68,9 +48,6 @@ final class PostFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a post with low or negative score.
-     */
     public function controversial(): self
     {
         return $this->state(fn (array $attributes) => [
@@ -78,9 +55,6 @@ final class PostFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a post for a specific subreddit.
-     */
     public function forSubreddit(Subreddit $subreddit): self
     {
         return $this->state(fn (array $attributes) => [
@@ -88,9 +62,6 @@ final class PostFactory extends Factory
         ]);
     }
 
-    /**
-     * Create a post by a specific user.
-     */
     public function byUser(User $user): self
     {
         return $this->state(fn (array $attributes) => [
