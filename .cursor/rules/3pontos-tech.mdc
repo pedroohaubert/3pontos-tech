@@ -1,0 +1,150 @@
+---
+alwaysApply: true
+---
+# 3Pontos Tech - Reddit Clone Project Rules
+
+## Visão Geral do Projeto
+**Reddit Clone** - Fórum de perguntas e respostas baseado em subreddits/comunidades temáticas.
+
+**Objetivo:** Replicar estrutura básica do Reddit com funcionalidades essenciais de comunidades, postagens, comentários e votos.
+
+## Stack Tecnológico (OBRIGATÓRIA)
+- **PHP:** 8.3 ou superior
+- **Framework:** Laravel 12
+- **Admin Panel:** FilamentPHP 4
+- **Database:** SQLite (padrão) ou PostgreSQL/MySQL
+- **Front-end:** Blade templates + TailwindCSS v4
+- **Plugins Permitidos:** Apenas MediaLibrary do Spatie
+
+## Arquitetura do Sistema
+### Estrutura de Dados
+- **Usuários:** Autenticação e perfis
+- **Subreddits:** Comunidades temáticas (criação dinâmica via Filament)
+- **Posts:** Conteúdo em Markdown, pertencente a subreddits
+- **Comentários:** Sistema de comentários aninhados
+- **Votos:** Upvote/downvote para posts e comentários
+
+### Ambientes
+- **Admin:** FilamentPHP para gerenciamento de subreddits e posts
+- **Front-end:** Blade + Tailwind para interface pública
+
+## Padrões de Desenvolvimento
+
+### Qualidade de Código
+- **Clean Code:** Legibilidade, organização em camadas, nomenclatura coerente
+- **PSR-12:** Padrão de codificação PHP
+- **Conventional Commits:** `feat(scope): description`, `fix(scope): description`, etc.
+- **Documentação:** DEVELOPMENT.md escrito manualmente (sem IA)
+
+### Laravel/FilamentPHP
+- Uso adequado de **Eloquent ORM** com relacionamentos
+- **Policies** para controle de acesso
+- **Actions** e **Widgets** do Filament
+- **Resources** para CRUD administrativo
+- Separação clara entre lógica de negócio e apresentação
+
+### Modelagem de Dados
+- **Normalização** adequada
+- **Consistência** nas relações
+- **Previsibilidade** na estrutura
+- Uso de **migrations** para versionamento
+
+### Front-end
+- **TailwindCSS v4:** Utilitários essenciais para layout e tipografia
+- **Blade Templates:** Sem JavaScript desnecessário
+- Design responsivo seguindo layout do Figma
+
+## Restrições e Regras
+### Proibido
+- Plugins externos além do MediaLibrary
+- Geração automática de documentação por IA
+- Uso de JavaScript frameworks (React, Vue, etc.)
+- Alteração da stack tecnológica especificada
+
+### Obrigatório
+- Commits incrementais em Conventional Commits
+- Documentação DEVELOPMENT.md com decisões técnicas
+- Justificativa de trade-offs no DEVELOPMENT.md
+- Análise crítica das decisões tomadas
+
+## Processo de Desenvolvimento
+### Versionamento
+- Branch `develop` para desenvolvimento
+- Pull Request para `main` quando pronto
+- Commits seguindo padrão: `feat(component): description`
+
+### Testes
+- Testes de unidade para lógica crítica
+- Testes básicos de integração
+- Cobertura mínima para funcionalidades core
+
+### Segurança
+- Validação adequada de inputs
+- Políticas de acesso implementadas
+- Sanitização de conteúdo Markdown
+
+## Critérios de Aceite por Nível
+
+### Básico
+- Funcionalidades centrais implementadas
+- Recursos básicos de Laravel/Filament/Tailwind
+
+### Intermediário
+- Modelagem de dados sólida
+- Separação de camadas
+- Testes unitários básicos
+
+### Avançado
+- Arquitetura escalável
+- Uso avançado de Filament
+- Políticas de segurança robustas
+- Testes abrangentes
+- CI/CD simples
+
+## Estrutura de Diretórios Sugerida
+```
+app/
+├── Http/Controllers/     # Controllers web
+├── Models/              # Eloquent Models
+├── Policies/            # Authorization policies
+└── Filament/            # Admin resources
+
+database/
+├── migrations/          # Database schema
+└── seeders/            # Data seeding
+
+resources/
+├── views/              # Blade templates
+│   ├── components/     # Reusable components
+│   ├── layouts/        # Page layouts
+│   └── livewire/       # Livewire components (se usado)
+└── css/               # Custom styles
+
+routes/
+└── web.php            # Web routes
+
+tests/
+├── Unit/              # Unit tests
+└── Feature/          # Feature tests
+```
+
+## Diretrizes para Agente IA
+
+### Sempre Priorizar
+1. **Tecnologias Corretas:** Seguir stack obrigatória exatamente
+2. **Clean Code:** Código legível e bem organizado
+3. **Laravel Best Practices:** Usar recursos nativos adequadamente
+4. **Documentação:** Registrar decisões em DEVELOPMENT.md
+
+### Validações Constantes
+- Verificar se migrations seguem convenções
+- Garantir uso adequado de Eloquent relationships
+- Validar implementação de policies
+- Confirmar uso correto de Tailwind classes
+
+### Abordagem de Desenvolvimento
+- Começar pela modelagem de dados
+- Implementar funcionalidades core primeiro
+- Adicionar admin panel com Filament
+- Refinar UI/UX com Tailwind
+- Documentar decisões tomadas
