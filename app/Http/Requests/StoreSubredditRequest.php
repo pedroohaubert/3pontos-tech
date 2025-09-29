@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\DTOs\SubredditDTO;
+use App\Models\Subreddit;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreSubredditRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        return $this->user() && $this->user()->can('create', Subreddit::class);
     }
 
     public function rules(): array

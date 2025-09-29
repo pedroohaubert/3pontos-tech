@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\DTOs\PostDTO;
+use App\Models\Post;
 use App\Models\Subreddit;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -12,7 +13,7 @@ final class StorePostRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        return $this->user() && $this->user()->can('create', Post::class);
     }
 
     public function rules(): array

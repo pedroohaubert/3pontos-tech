@@ -13,8 +13,7 @@ final class UpdateSubredditRequest extends FormRequest
     {
         $subreddit = $this->route('subreddit');
 
-        return auth()->check()
-               && (auth()->id() === $subreddit->user_id || auth()->user()->isAdmin());
+        return $this->user() && $this->user()->can('update', $subreddit);
     }
 
     public function rules(): array

@@ -4,18 +4,22 @@
 
 - ✅ **Fase 1: Setup e Autenticação** - COMPLETO
 - ✅ **Fase 2: Business Logic (Services & DTOs)** - COMPLETO
-- 🔄 **Próximo: Fase 3 - Controllers & Policies (API Layer)**
+- ✅ **Fase 3: Controllers & Policies (API Layer)** - COMPLETO
+- 🔄 **Próximo: Fase 4 - Admin Panel (FilamentPHP)**
 
 ## Conquistas Implementadas
 
 ### 📊 Estatísticas do Projeto
 
-- **21 arquivos PHP** criados/modificados
+- **29 arquivos PHP** criados/modificados
 - **465 linhas** de comentários redundantes removidas
 - **5 Models** com relacionamentos Eloquent completos
 - **5 DTOs** para transferência de dados
 - **5 Services** com lógica de negócio encapsulada
-- **9 Form Requests** com validação avançada
+- **9 Form Requests** com validação avançada + policies integration
+- **4 Policies** para controle de autorização
+- **4 Controllers** thin com injeção de dependência
+- **24 rotas web** configuradas com middleware auth
 - **11 Migrations** para estrutura de dados
 - **5 Factories** para seeding de dados
 
@@ -47,9 +51,9 @@
 
 ### 🔐 Sistema de Autorização
 
-- **Implementação**: Authorization diretamente nos Form Requests
-- **Benefício**: Validação precoce e consistente
-- **Padrão**: `auth()->check() && auth()->id() === $resource->user_id || auth()->user()->isAdmin()`
+- **Implementação**: Laravel Policies dedicadas + Form Requests
+- **Benefício**: Separação clara entre validação e autorização, reutilização e testabilidade
+- **Padrão**: `$this->user() && $this->user()->can('update', $model)`
 
 ### 🗃️ Modelagem de Dados
 
@@ -142,27 +146,77 @@ php artisan migrate ✅
 - ✅ Custom validation rules para Markdown, unique votes, depth limits
 - ✅ Authorization checks integrados
 
-## Fase 3: Controllers & Policies (API Layer)
+## Fase 3: Controllers & Policies (API Layer) ✅ COMPLETO
 
-### 3.1 Thin Controllers
+### 3.1 Thin Controllers ✅ IMPLEMENTADO
 
-- SubredditController (index, show, store, update, destroy)
-- PostController (index, show, store, update, destroy)
-- CommentController (store, update, destroy, nested operations)
-- VoteController (upvote, downvote, remove vote)
+**SubredditController** (`app/Http/Controllers/SubredditController.php`)
 
-### 3.2 Authorization Policies
+- `index()`: Lista subreddits públicos (View)
+- `show($id)`: Página do subreddit com posts (View)
+- `store()`: Cria subreddit via form POST (Redirect)
+- `update($id)`: Edita subreddit (Redirect)
+- `destroy($id)`: Remove subreddit (Redirect)
 
-- SubredditPolicy (create, update, delete)
-- PostPolicy (create, update, delete, view)
-- CommentPolicy (create, update, delete)
-- VotePolicy (vote, unvote)
+**PostController** (`app/Http/Controllers/PostController.php`)
 
-### 3.3 API Routes
+- `index()`: Dashboard/home com posts (View)
+- `show($id)`: Página do post com comentários (View)
+- `store()`: Cria post via form (Redirect)
+- `update($id)`: Edita post (Redirect)
+- `destroy($id)`: Remove post (Redirect)
 
-- Definir rotas RESTful
-- Agrupar por prefixos (api/v1)
-- Middleware de autenticação
+**CommentController** (`app/Http/Controllers/CommentController.php`)
+
+- `store()`: Cria comentário/reply (Redirect)
+- `update($id)`: Edita comentário (Redirect)
+- `destroy($id)`: Remove comentário (Redirect)
+
+**VoteController** (`app/Http/Controllers/VoteController.php`)
+
+- `store()`: Upvote/downvote (Redirect)
+- `destroy($id)`: Remove vote (Redirect)
+
+### 3.2 Authorization Policies ✅ IMPLEMENTADO
+
+**Criadas Policies dedicadas** seguindo as melhores práticas do Laravel:
+
+- **SubredditPolicy**: Controle de CRUD para subreddits (owners + admins)
+- **PostPolicy**: Controle de CRUD para posts (owners + admins)
+- **CommentPolicy**: Controle de CRUD para comentários (owners + admins)
+- **VotePolicy**: Prevenção de auto-voto + controle de votos
+
+**Form Requests atualizados** para usar policies:
+
+```php
+// Exemplo em UpdatePostRequest
+public function authorize(): bool
+{
+    $post = $this->route('post');
+    return $this->user() && $this->user()->can('update', $post);
+}
+```
+
+**Benefícios da abordagem**:
+
+- Separação clara entre validação (Form Requests) e autorização (Policies)
+- Reutilização de lógica de autorização
+- Testabilidade independente
+- Manutenibilidade aprimorada
+
+### 3.3 Web Routes ✅ IMPLEMENTADO
+
+Rotas configuradas em `routes/web.php` com grupos de middleware auth:
+
+- **Rotas públicas**: Home, subreddit pages, post pages (sem auth)
+- **Rotas protegidas**: CRUD operations para subreddits, posts, comments, votes (com auth)
+
+### 3.4 Testes de Integração ✅ APROVADO
+
+- ✅ Rotas registradas corretamente (`php artisan route:list`)
+- ✅ Controllers instanciados e services injetados
+- ✅ Form Requests com autorização via policies funcionando
+- ✅ Erro esperado de views não encontradas (implementadas na Fase 5)
 
 ## Fase 4: Admin Panel (FilamentPHP - EXCLUSIVO)
 

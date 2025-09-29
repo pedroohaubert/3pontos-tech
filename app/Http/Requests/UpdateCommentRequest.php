@@ -13,8 +13,7 @@ final class UpdateCommentRequest extends FormRequest
     {
         $comment = $this->route('comment');
 
-        return auth()->check()
-               && (auth()->id() === $comment->user_id || auth()->user()->isAdmin());
+        return $this->user() && $this->user()->can('update', $comment);
     }
 
     public function rules(): array

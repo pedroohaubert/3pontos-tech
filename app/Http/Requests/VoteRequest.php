@@ -7,13 +7,39 @@ namespace App\Http\Requests;
 use App\DTOs\VoteDTO;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Policies\VotePolicy;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class VoteRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        if (! $this->user()) {
+            return false;
+        }
+
+        $voteableType = $this->input('voteable_type');
+        $voteableId = $this->input('voteable_id');
+
+        // Get the voteable model
+        $voteable = $voteableType::find($voteableId);
+
+        if (! $voteable) {
+            return false;
+        }
+
+        $policy = new VotePolicy();
+
+        // Check authorization based on voteable type
+        if ($voteable instanceof Post) {
+            return $policy->voteOnPost($this->user(), $voteable);
+        }
+
+        if ($voteable instanceof Comment) {
+            return $policy->voteOnComment($this->user(), $voteable);
+        }
+
+        return false;
     }
 
     public function rules(): array

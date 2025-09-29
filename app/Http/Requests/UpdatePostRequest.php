@@ -13,8 +13,7 @@ final class UpdatePostRequest extends FormRequest
     {
         $post = $this->route('post');
 
-        return auth()->check()
-               && (auth()->id() === $post->user_id || auth()->user()->isAdmin());
+        return $this->user() && $this->user()->can('update', $post);
     }
 
     public function rules(): array

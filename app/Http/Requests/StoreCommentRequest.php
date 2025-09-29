@@ -13,7 +13,7 @@ final class StoreCommentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        return $this->user() && $this->user()->can('create', Comment::class);
     }
 
     public function rules(): array
