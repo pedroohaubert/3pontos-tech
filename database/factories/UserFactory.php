@@ -55,6 +55,7 @@ final class UserFactory extends Factory
         return $this->state(fn (array $attributes): array => [
             'name' => 'admin',
             'email' => 'admin@admin.com',
+            'role' => 'admin',
         ]);
     }
 }

@@ -39,6 +39,10 @@ npm install && npm run dev ✅
 ```bash
 php artisan make:migration add_role_to_users_table --table=users ✅
 php artisan migrate ✅ (campo role adicionado com default 'user')
+# UserFactory admin() method atualizado para definir role='admin'
+# Migration criada para atualizar usuário admin existente para role='admin'
+php artisan make:migration update_admin_user_role --table=users ✅
+php artisan migrate ✅
 ```
 
 ### 1.3 Modelagem de Dados Core
