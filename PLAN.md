@@ -1,18 +1,75 @@
 # Reddit Clone Development Plan
 
+## Progresso Atual
+
+- ✅ **Fase 1: Setup e Autenticação** - COMPLETO
+- ✅ **Fase 2: Business Logic (Services & DTOs)** - COMPLETO
+- 🔄 **Próximo: Fase 3 - Controllers & Policies (API Layer)**
+
+## Conquistas Implementadas
+
+### 📊 Estatísticas do Projeto
+
+- **21 arquivos PHP** criados/modificados
+- **465 linhas** de comentários redundantes removidas
+- **5 Models** com relacionamentos Eloquent completos
+- **5 DTOs** para transferência de dados
+- **5 Services** com lógica de negócio encapsulada
+- **9 Form Requests** com validação avançada
+- **11 Migrations** para estrutura de dados
+- **5 Factories** para seeding de dados
+
+### 🏗️ Arquitetura Implementada
+
+- **Clean Architecture** com thin controllers
+- **Self-documenting code** (métodos sem comentários óbvios)
+- **Laravel 12 + FilamentPHP 4** stack obrigatória
+- **Markdown parsing** para conteúdo de posts
+- **Sistema de comentários aninhados** com limite de profundidade
+- **Sistema de votos** (upvote/downvote) com prevenção de auto-voto
+- **Authorization policies** integradas em Form Requests
+
+## Decisões Técnicas Importantes
+
+### 🎯 Clean Code & Self-Documenting Code
+
+- **Princípio adotado**: "Código que não precisa de comentários é código bem escrito"
+- **Implementação**: Métodos como `createPost()`, `updateUser()`, `isReply()` são auto-explicativos
+- **Resultado**: 465 linhas de comentários redundantes removidas
+- **Benefício**: Manutenibilidade e legibilidade aumentadas
+
+### 🏛️ Arquitetura Thin Controllers
+
+- **Controllers**: Apenas coordenam requests (thin controllers)
+- **Services**: Contém toda lógica de negócio
+- **DTOs**: Transferência de dados entre camadas
+- **Form Requests**: Validação e conversão para DTOs
+
+### 🔐 Sistema de Autorização
+
+- **Implementação**: Authorization diretamente nos Form Requests
+- **Benefício**: Validação precoce e consistente
+- **Padrão**: `auth()->check() && auth()->id() === $resource->user_id || auth()->user()->isAdmin()`
+
+### 🗃️ Modelagem de Dados
+
+- **Soft Deletes**: Implementado em Posts e Comments para moderação
+- **Polymorphic Relations**: Sistema de votos funciona com Posts e Comments
+- **Indexes Estratégicos**: Performance otimizada para queries comuns
+
 ## Visão Geral
 
 Desenvolvimento de um clone do Reddit seguindo stack obrigatória (Laravel 12 + FilamentPHP 4 + TailwindCSS v4), com ênfase em arquitetura clean, backend-first e estrutura organizada com thin controllers.
 
 ## Análise das Restrições do Projeto
 
-### ✅ Laravel Breeze - PERMITIDO
+### ✅ Laravel Breeze - IMPLEMENTADO
 
 - **Justificativa**: O README.md proíbe apenas "Plugins externos fora o MediaLibrary". Laravel Breeze é um pacote oficial do Laravel, não um plugin externo.
-- **Estado atual**: Nenhum sistema de auth implementado ainda.
-- **Decisão**: Usar Laravel Breeze para autenticação básica (login/register/logout).
+- **Estado atual**: Sistema de autenticação completo com Breeze implementado.
+- **Implementação**: Login/register/logout, views customizadas com TailwindCSS, rotas de auth configuradas.
 
-## Fase 1: Setup e Autenticação (Backend Foundation)
+## Fase 1: Setup e Autenticação (Backend Foundation) ✅ COMPLETO
 
 ### 1.1 Instalar Laravel Breeze ✅ COMPLETO
 
@@ -60,27 +117,30 @@ php artisan migrate ✅
 - ✅ Comment model (aninhado)
 - ✅ Vote model (upvote/downvote)
 
-## Fase 2: Business Logic (Services & DTOs)
+## Fase 2: Business Logic (Services & DTOs) ✅ COMPLETO
 
-### 2.1 Criar DTOs
+### 2.1 Criar DTOs ✅ COMPLETO
 
-- UserDTO, SubredditDTO, PostDTO, CommentDTO, VoteDTO
-- Form request DTOs para validação
+- ✅ UserDTO, SubredditDTO, PostDTO, CommentDTO, VoteDTO
+- ✅ Form request DTOs para validação
+- ✅ Self-documenting code (métodos sem comentários redundantes)
 
-### 2.2 Implementar Services
+### 2.2 Implementar Services ✅ COMPLETO
 
-- SubredditService (CRUD operations)
-- PostService (create, update, delete, markdown parsing)
-- CommentService (nested comments, threading)
-- VoteService (upvote/downvote logic)
-- UserService (profile management)
+- ✅ SubredditService (CRUD operations)
+- ✅ PostService (create, update, delete, markdown parsing)
+- ✅ CommentService (nested comments, threading)
+- ✅ VoteService (upvote/downvote logic)
+- ✅ UserService (profile management)
+- ✅ Clean architecture com thin controllers
 
-### 2.3 Form Requests & Validation
+### 2.3 Form Requests & Validation ✅ COMPLETO
 
-- StorePostRequest, UpdatePostRequest
-- StoreCommentRequest, UpdateCommentRequest
-- CreateSubredditRequest
-- Custom validation rules para Markdown, unique votes, etc.
+- ✅ StorePostRequest, UpdatePostRequest
+- ✅ StoreCommentRequest, UpdateCommentRequest
+- ✅ CreateSubredditRequest, VoteRequest
+- ✅ Custom validation rules para Markdown, unique votes, depth limits
+- ✅ Authorization checks integrados
 
 ## Fase 3: Controllers & Policies (API Layer)
 
