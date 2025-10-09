@@ -14,7 +14,7 @@ pint: ## Run Pint code style fixer
 test-pint: ## Run Pint code style fixer in test mode
 	@export XDEBUG_MODE=off
 	@$(CURDIR)/vendor/bin/pint --test --parallel
-	@unset XDEBUG_MODE=off
+	@unset XDEBUG_MODE
 
 .PHONY: rector
 rector: ## Run Rector
@@ -63,7 +63,7 @@ env-up: ## Start the development environment
 	@docker compose --file docker-compose.env.yml up --detach
 
 .PHONY: env-down
-env-down: ## Start the development environment
+env-down: ## Stop the development environment
 	@docker compose --file docker-compose.env.yml down --rmi all --volumes
 
 .PHONY: dev
